@@ -1,0 +1,66 @@
+.python-version
+.DS_Store
+
+# Byte-compiled files
+__pycache__/
+*.py[cod]
+*$PYTHONWARNINGS
+
+# Virtual environments
+venv/
+.env/
+.venv/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Logs and runtime files
+*.log
+*.out
+*.pid
+*.swp
+*.swo
+
+# Cache files
+.cache/
+*.pyc
+*.pyo
+*.pyd
+
+# Testing and coverage reports
+.tox/
+.nox/
+.coverage
+coverage.xml
+htmlcov/
+pytest_cache/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.iml
+
+# Distribution files
+dist/
+build/
+*.egg-info/
+
+# Docker-related
+.dockerignore
+docker-compose.override.yml
+
+# Environment variables & secrets
+.env
+*.env
+secrets.json
+
+# MyPy type checking reports
+.mypy_cache/
+dmypy.json
+
+# Pylint reports
+.pylint.d/
+
+# Poetry & Pipenv
+poetry.lock
+Pipfile.lock

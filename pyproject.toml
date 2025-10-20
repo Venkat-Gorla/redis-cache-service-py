@@ -4,9 +4,9 @@ version = "0.1.0"
 description = "Async Redis-based caching service with event-driven invalidation and concurrency demo"
 readme = "README.md"
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "python-dotenv>=1.1.1",
+    "redis>=6.4.0",
+    "typer>=0.19.2",
+]
 
-[tool.uv]
-
-[project.scripts]
-cachecli = "redis_cache_service_py.cli:app"

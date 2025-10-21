@@ -21,9 +21,30 @@ def ping():
         typer.echo(f"Error: {e}")
 
 @app.command()
+def set_key(key: str, value: str):
+    """Set a key-value pair in Redis."""
+    try:
+        redis_client.set(key, value)
+        typer.echo(f"Key '{key}' set successfully.")
+    except redis.exceptions.ConnectionError as e:
+        typer.echo(f"Error: {e}")
+
+@app.command()
+def get_key(key: str):
+    """Get a value by key from Redis."""
+    try:
+        value = redis_client.get(key)
+        if value is None:
+            typer.echo(f"Key '{key}' not found.")
+        else:
+            typer.echo(f"{key} = {value.decode('utf-8')}")
+    except redis.exceptions.ConnectionError as e:
+        typer.echo(f"Error: {e}")
+
+@app.command()
 def dummy():
-    """dummy test function."""
-    typer.echo(f"dummy function for testing")
+    """Run a dummy test command."""
+    typer.echo("Dummy function for testing.")
 
 if __name__ == "__main__":
     app()

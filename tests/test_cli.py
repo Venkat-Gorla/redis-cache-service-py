@@ -10,6 +10,8 @@ import cli
 
 runner = CliRunner()
 
+# vegorla: test coverage for stream functionality, shoule we use mock or real redis?
+
 @pytest.fixture(autouse=True)
 def mock_redis(monkeypatch):
     fake_redis_client = fakeredis.FakeRedis()
@@ -24,7 +26,10 @@ def test_ping():
 def test_set_key():
     result = runner.invoke(cli.app, ["set-key", "foo", "bar"])
     assert result.exit_code == 0
-    assert "Key 'foo' set successfully." in result.output
+    assert (
+        f"Key 'foo' set successfully and recorded invalidation "
+        f"(trimmed to {cli.STREAM_MAXLEN})."
+    ) in result.output
 
     # Verify the key was set
     result = runner.invoke(cli.app, ["get-key", "foo"])

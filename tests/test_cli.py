@@ -10,8 +10,6 @@ import cli
 
 runner = CliRunner()
 
-# vegorla: test coverage for stream functionality, shoule we use mock or real redis?
-
 @pytest.fixture(autouse=True)
 def mock_redis(monkeypatch):
     fake_redis_client = fakeredis.FakeRedis()
@@ -40,3 +38,17 @@ def test_get_key_not_found():
     result = runner.invoke(cli.app, ["get-key", "nonexistent"])
     assert result.exit_code == 0
     assert "Key 'nonexistent' not found." in result.output
+
+def test_stream_trimming(mock_redis):
+    for i in range(cli.STREAM_MAXLEN + 5):
+        runner.invoke(cli.app, ["set-key", f"k{i}", f"v{i}"])
+
+    stream_len = cli.redis_client.xlen(cli.STREAM_KEY)
+    assert stream_len <= cli.STREAM_MAXLEN
+
+def test_stream_event_created(mock_redis):
+    runner.invoke(cli.app, ["set-key", "alpha", "beta"])
+    entries = cli.redis_client.xrange(cli.STREAM_KEY)
+    assert len(entries) == 1
+    msg_id, data = entries[0]
+    assert data[b"key"].decode() == "alpha"

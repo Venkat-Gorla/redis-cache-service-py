@@ -48,16 +48,6 @@ def get_key(key: str):
     except redis.exceptions.ConnectionError as e:
         typer.echo(f"Error: {e}")
 
-def print_messages(messages, last_id):
-    for stream, events in messages:
-        for msg_id, fields in events:
-            key = fields.get(b"key", b"").decode()
-            typer.echo(f"[EVENT] Invalidate cache for key: {key} (id={msg_id.decode()})")
-            last_id = msg_id.decode()
-
-    typer.echo(f"Last processed ID: {last_id}")
-    return last_id
-
 @app.command()
 def consume_pending(last_id: str = "0-0"):
     """Consume messages from the invalidation stream."""
@@ -68,6 +58,16 @@ def consume_pending(last_id: str = "0-0"):
         return
 
     last_id = print_messages(messages, last_id)
+
+def print_messages(messages, last_id):
+    for stream, events in messages:
+        for msg_id, fields in events:
+            key = fields.get(b"key", b"").decode()
+            typer.echo(f"[EVENT] Invalidate cache for key: {key} (id={msg_id.decode()})")
+            last_id = msg_id.decode()
+
+    typer.echo(f"Last processed ID: {last_id}")
+    return last_id
 
 @app.command()
 def show_stream():

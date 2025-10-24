@@ -52,3 +52,18 @@ def test_stream_event_created(mock_redis):
     assert len(entries) == 1
     msg_id, data = entries[0]
     assert data[b"key"].decode() == "alpha"
+
+def test_consume_pending_from_last(mock_redis):
+    """Ensure consuming from last ID reads nothing after full stream processed."""
+    # Arrange: add a few messages into the stream
+    for i in range(3):
+        cli.redis_client.xadd(cli.STREAM_KEY, {"event": "invalidate", "key": f"key{i}"})
+
+    result = runner.invoke(cli.app, ["consume-pending"])
+    assert result.exit_code == 0
+    assert "Last processed ID:" in result.output
+    assert cli.redis_client.get(cli._LAST_PROCESSED_ID) is not None
+
+    result = runner.invoke(cli.app, ["consume-pending-from-last"])
+    assert result.exit_code == 0
+    assert "No new events." in result.output

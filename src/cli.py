@@ -13,6 +13,7 @@ if not redis_url:
 redis_client = redis.Redis.from_url(redis_url)
 STREAM_KEY = "cache_invalidation_stream"
 STREAM_MAXLEN = 20  # keep last 20 messages only
+_LAST_PROCESSED_ID = "678d4522-df77-451c-bda7-8c7ca464759d"
 
 @app.command()
 def ping():
@@ -49,6 +50,17 @@ def get_key(key: str):
         typer.echo(f"Error: {e}")
 
 @app.command()
+def consume_pending_from_last():
+    """Consume messages from the invalidation stream starting from last processed ID."""
+    last_id = redis_client.get(_LAST_PROCESSED_ID)
+    if last_id is None:
+        last_id = "0-0"
+    else:
+        last_id = last_id.decode()
+
+    consume_pending(last_id)
+
+@app.command()
 def consume_pending(last_id: str = "0-0"):
     """Consume messages from the invalidation stream."""
     typer.echo(f"Reading events from {STREAM_KEY} starting at ID {last_id}")
@@ -58,6 +70,7 @@ def consume_pending(last_id: str = "0-0"):
         return
 
     last_id = print_messages(messages, last_id)
+    redis_client.set(_LAST_PROCESSED_ID, last_id)
 
 def print_messages(messages, last_id):
     for stream, events in messages:

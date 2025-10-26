@@ -18,34 +18,10 @@ async def test_async_ping_redis_success(fake_redis_client):
     assert result == "PONG"
 
 @pytest.mark.asyncio
-async def test_async_ping_redis_failure(monkeypatch):
-    async def mock_ping():
-        raise Exception("Ping failed")
-
-    class FakeClient:
-        async def ping(self):
-            return await mock_ping()
-
-    result = await async_ping_redis(FakeClient())
-    assert "Error: Ping failed" in result
-
-@pytest.mark.asyncio
 async def test_async_set_key_success(fake_redis_client):
     result = await async_set_key(fake_redis_client, "foo", "bar")
     assert result == "Key 'foo' set successfully."
     assert await fake_redis_client.get("foo") == b"bar"
-
-@pytest.mark.asyncio
-async def test_async_set_key_failure(monkeypatch):
-    async def mock_set(key, value):
-        raise Exception("Set failed")
-
-    class FakeClient:
-        async def set(self, key, value):
-            return await mock_set(key, value)
-
-    result = await async_set_key(FakeClient(), "foo", "bar")
-    assert "Error: Set failed" in result
 
 @pytest.mark.asyncio
 async def test_async_get_key_success(fake_redis_client):
@@ -58,14 +34,38 @@ async def test_async_get_key_missing(fake_redis_client):
     result = await async_get_key(fake_redis_client, "missing")
     assert result == "Key 'missing' not found."
 
+"""Shared mock client and async exception simulators for Redis error tests."""
+async def mock_ping():
+    raise Exception("Ping failed")
+
+async def mock_set(key, value):
+    raise Exception("Set failed")
+
+async def mock_get(key):
+    raise Exception("Get failed")
+
+class FakeClient:
+    async def ping(self):
+        return await mock_ping()
+
+    async def set(self, key, value):
+        return await mock_set(key, value)
+
+    async def get(self, key):
+        return await mock_get(key)
+
+# Tests for error handling by mocking exceptions
+@pytest.mark.asyncio
+async def test_async_ping_redis_failure(monkeypatch):
+    result = await async_ping_redis(FakeClient())
+    assert "Error: Ping failed" in result
+
+@pytest.mark.asyncio
+async def test_async_set_key_failure(monkeypatch):
+    result = await async_set_key(FakeClient(), "foo", "bar")
+    assert "Error: Set failed" in result
+
 @pytest.mark.asyncio
 async def test_async_get_key_failure(monkeypatch):
-    async def mock_get(key):
-        raise Exception("Get failed")
-
-    class FakeClient:
-        async def get(self, key):
-            return await mock_get(key)
-
     result = await async_get_key(FakeClient(), "foo")
     assert "Error: Get failed" in result

@@ -1,3 +1,5 @@
+# Demo program to show typer usage, not part of the core project
+
 import typer
 
 app = typer.Typer()
@@ -5,7 +7,7 @@ app = typer.Typer()
 @app.command()
 def greet():
     """
-    Greets a person
+    Greets a person.
     """
     typer.echo(f"greet function")
 

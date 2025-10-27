@@ -4,7 +4,7 @@ Async Redis-based caching service demonstrating:
 
 - Read/Write-through caching
 - Event-driven invalidation via Redis Pub/Sub
-- Concurrency-safe async architecture
+- Concurrency-safe async architecture with asyncio
 - CLI interface (Typer)
 - Unit + integration tests (pytest + fakeredis)
 
@@ -12,17 +12,14 @@ Async Redis-based caching service demonstrating:
 
 ```bash
 uv sync
-uv run cachecli --help
+uv run src\cli.py --help
 ```
 
-## 🧠 Pending Features
+## 📁 Project Structure
 
-- Async I/O with asyncio
-- Pub/Sub for cache invalidation
-- Extensible cache strategy architecture
-- Metrics for cache performance
+Pending: Please fill this section
 
-## 🧠 Cache Stampede Prevention Demo
+## Cache Stampede Prevention Demo
 
 This demo illustrates how the async cache service mitigates **cache stampede** — a common problem where multiple clients simultaneously request the same missing or invalidated key, causing redundant backend calls.
 
@@ -84,12 +81,16 @@ asyncio.run(main())
 
 All 5 concurrent tasks will share **a single backend call**, proving that cache stampede mitigation works.
 
----
+## 🧰 Tech Stack
 
-### ✅ Next Steps
+Pending, to be filled
 
+## 🧪 Tests in Action
+
+Pending, screen capture to be added
+
+## ✅ Future Enhancements
+
+- Extensible cache strategy architecture
 - Extend locking to Redis for distributed processes
-- Add optional TTL jitter to reduce synchronized expirations
 - Visualize metrics (hit/miss, lock contention) in Grafana or CLI
-
----

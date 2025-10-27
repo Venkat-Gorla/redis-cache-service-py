@@ -1,5 +1,12 @@
 # 🚀 Redis Cache Service (Async Python Demo)
 
+![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)
+![Redis](https://img.shields.io/badge/Redis-7.x-red?logo=redis)
+![Asyncio](https://img.shields.io/badge/Async-asyncio-green)
+![Typer](https://img.shields.io/badge/CLI-Typer-orange)
+![pytest](https://img.shields.io/badge/Tests-pytest%20%2B%20fakeredis-yellow)
+![uv](https://img.shields.io/badge/Package%20Manager-uv-9cf)
+
 A **modern async caching service** built on **Redis** to demonstrate:
 
 - 🔁 Read/Write-through caching
@@ -40,7 +47,7 @@ redis-cache-service-py/
     └── conftest.py               # Pytest fixtures
 ```
 
-## Cache Stampede Prevention Demo
+## 🧮 Cache Stampede Prevention Demo
 
 This project demonstrates **cache stampede mitigation** — preventing multiple concurrent clients from redundantly fetching the same missing key.
 
@@ -54,7 +61,7 @@ The service uses **per-key async locks** (`LockTable`) to ensure:
 
 - The first requester acquires the lock and triggers the backend fetch.
 - All other concurrent requests for the same key await the same lock.
-- Once the result is fetched and cached, all waiting requests are served from cache immediately.
+- Once the result is fetched and cached, all waiting requests are served from the cache immediately.
 
 This eliminates duplicate backend fetches and prevents stampedes.
 
@@ -85,8 +92,6 @@ All results: [22, 22, 22, 22, 22]
 
 All concurrent requests share a **single backend call**, proving effective stampede prevention.
 
----
-
 ## 🧰 Tech Stack
 
 | Component                    | Description                    |
@@ -114,7 +119,7 @@ uv run pytest -k test_simple_cache_coalesces_requests -v
 
 All tests simulate **concurrent clients, lock behavior, and cache invalidation**.
 
-Pending, screen capture to be added
+<img src="./public/unit-tests.PNG" alt="Unit Test Results" width="700" />
 
 ## 🔮 Future Enhancements
 

@@ -26,9 +26,8 @@ async def test_lock_table_different_keys_create_different_locks():
     )
     assert a_lock is not b_lock
 
-# vegorla: why do we need patch here?
 @pytest.mark.asyncio
-async def test_simple_cache_coalesces_requests(monkeypatch):
+async def test_simple_cache_coalesces_requests():
     cache = SimpleAsyncCache()
     call_counter = {"count": 0}
 
@@ -51,12 +50,13 @@ async def test_simple_cache_coalesces_requests(monkeypatch):
 @pytest.mark.asyncio
 async def test_simple_cache_reuses_cached_value():
     cache = SimpleAsyncCache()
+    call_counter = {"count": 0}
 
     async def loader():
+        call_counter["count"] += 1
         await asyncio.sleep(0)
         return "once"
 
-# vegorla: the validation should be better, this test will pass even if loader is called twice
     # first call computes and stores
     result1 = await cache.get_or_set("x", loader)
     # second call returns immediately from cache
@@ -64,6 +64,9 @@ async def test_simple_cache_reuses_cached_value():
 
     assert result1 == "once"
     assert result2 == "once"
+
+    # ensure loader called exactly once
+    assert call_counter["count"] == 1, "Loader called multiple times — cache not reused"
 
 @pytest.mark.asyncio
 async def test_concurrent_different_keys_load_independently():

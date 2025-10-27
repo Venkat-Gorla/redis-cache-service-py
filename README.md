@@ -1,27 +1,48 @@
-# Redis Cache Service
+# 🚀 Redis Cache Service (Async Python Demo)
 
-Async Redis-based caching service demonstrating:
+A **modern async caching service** built on **Redis** to demonstrate:
 
-- Read/Write-through caching
-- Event-driven invalidation via Redis Pub/Sub
-- Concurrency-safe async architecture with asyncio
-- CLI interface (Typer)
-- Unit + integration tests (pytest + fakeredis)
+- 🔁 Read/Write-through caching
+- 📡 Event-driven invalidation using Redis **Pub/Sub**
+- 🧩 Concurrency-safe async design with **asyncio**
+- 🧰 Command-line interface powered by **Typer**
+- ✅ Full test coverage with **pytest + fakeredis**
 
 ## 🧱 Quick Start
 
 ```bash
+# Install dependencies
 uv sync
+
+# Explore CLI options
 uv run src\cli.py --help
 ```
 
-## 📁 Project Structure
+## 📂 Project Structure
 
-Pending: Please fill this section
+```
+redis-cache-service-py/
+│
+├── pyproject.toml
+├── src/
+│   ├── cli.py                    # CLI entrypoint (Typer)
+│   ├── async_cli.py              # Async CLI variant
+│   ├── redis_utils.py            # Redis helper functions
+│   └── cache/
+│       ├── manager.py            # Core cache read/write logic
+│       ├── lock_table.py         # Per-key asyncio locks (anti-stampede)
+│       └── stampede_prevention_demo.py  # Demo script
+│
+└── tests/
+    ├── test_cache_manager.py     # Integration & stampede prevention tests
+    ├── test_cli.py               # CLI command tests
+    ├── test_redis_utils.py       # Redis utility tests
+    └── conftest.py               # Pytest fixtures
+```
 
 ## Cache Stampede Prevention Demo
 
-This demo illustrates how the async cache service mitigates **cache stampede** — a common problem where multiple clients simultaneously request the same missing or invalidated key, causing redundant backend calls.
+This project demonstrates **cache stampede mitigation** — preventing multiple concurrent clients from redundantly fetching the same missing key.
 
 ### 🔍 Problem
 
@@ -29,7 +50,7 @@ When a popular cache key expires or is invalidated, many concurrent requests may
 
 ### 💡 Solution
 
-The cache uses a **per-key async lock** to ensure that:
+The service uses **per-key async locks** (`LockTable`) to ensure:
 
 - The first requester acquires the lock and triggers the backend fetch.
 - All other concurrent requests for the same key await the same lock.
@@ -42,7 +63,7 @@ This eliminates duplicate backend fetches and prevents stampedes.
 Each key has a unique `asyncio.Lock` managed by a lightweight in-memory **LockTable**:
 
 ```python
-# Pseudocode summary
+# Simplified logic
 async def get_or_set(key, loader):
     async with lock_table[key]:         # Only one fetch per key
         if key not in cache:
@@ -52,37 +73,54 @@ async def get_or_set(key, loader):
 
 ### 🚀 Run the Demo
 
-You can simulate concurrent access with:
+```bash
+uv run -m src.cache.stampede_prevention_demo
+```
+
+**Sample Output:**
+
+```
+All results: [22, 22, 22, 22, 22]
+```
+
+All concurrent requests share a **single backend call**, proving effective stampede prevention.
+
+---
+
+## 🧰 Tech Stack
+
+| Component                    | Description                    |
+| ---------------------------- | ------------------------------ |
+| **Python 3.11+**             | Core language                  |
+| **Redis (Upstash or local)** | Backend cache                  |
+| **asyncio**                  | Async concurrency              |
+| **Typer**                    | Modern CLI framework           |
+| **pytest + fakeredis**       | Testing & mocking              |
+| **uv**                       | Lightweight dependency manager |
+
+## 🧪 Tests in Action
+
+Run all tests:
+
+```bash
+uv run pytest -v
+```
+
+Example focus test for stampede prevention:
 
 ```bash
 uv run pytest -k test_simple_cache_coalesces_requests -v
 ```
 
-Or interactively, from root folder:
-
-```bash
-redis-cache-service-py>uv run -m src.cache.stampede_prevention_demo
-
-Sample output:
-All results: [22, 22, 22, 22, 22]
-```
-
-All 5 concurrent tasks will share **a single backend call**, proving that cache stampede mitigation works.
-
-## 🧰 Tech Stack
-
-Pending, anything else to be added?
-- Python
-- uv for package management
-- pytest
-- Cloud based Redis (upstash)
-
-## 🧪 Tests in Action
+All tests simulate **concurrent clients, lock behavior, and cache invalidation**.
 
 Pending, screen capture to be added
 
-## ✅ Future Enhancements
+## 🔮 Future Enhancements
 
-- Extensible cache strategy architecture
-- Extend locking to Redis for distributed processes
-- Visualize metrics (hit/miss, lock contention) in Grafana or CLI
+- 🔧 Extensible cache strategy architecture
+- 🔐 Distributed lock mechanism using Redis for multi-instance setups
+- 📊 Real-time metrics (hit/miss rates, contention) via Grafana or CLI dashboards
+- 🧩 Pluggable invalidation policies and event hooks
+
+### ⭐ If you found this project interesting — star it on GitHub!

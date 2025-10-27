@@ -58,25 +58,13 @@ You can simulate concurrent access with:
 uv run pytest -k test_simple_cache_coalesces_requests -v
 ```
 
-Or interactively:
+Or interactively, from root folder:
 
-```python
-from cache.manager import SimpleAsyncCache
-import asyncio, random
+```bash
+redis-cache-service-py>uv run -m src.cache.stampede_prevention_demo
 
-cache = SimpleAsyncCache()
-
-async def slow_load():
-    await asyncio.sleep(2)
-    return random.randint(1, 100)
-
-async def main():
-    results = await asyncio.gather(
-        *[cache.get_or_set("demo_key", slow_load) for _ in range(5)]
-    )
-    print("All results:", results)
-
-asyncio.run(main())
+Sample output:
+All results: [22, 22, 22, 22, 22]
 ```
 
 All 5 concurrent tasks will share **a single backend call**, proving that cache stampede mitigation works.
@@ -84,6 +72,10 @@ All 5 concurrent tasks will share **a single backend call**, proving that cache 
 ## 🧰 Tech Stack
 
 Pending, to be filled
+Python
+uv for package management
+pytest
+Cloud based Redis (upstash)
 
 ## 🧪 Tests in Action
 

@@ -71,11 +71,11 @@ All 5 concurrent tasks will share **a single backend call**, proving that cache 
 
 ## 🧰 Tech Stack
 
-Pending, to be filled
-Python
-uv for package management
-pytest
-Cloud based Redis (upstash)
+Pending, anything else to be added?
+- Python
+- uv for package management
+- pytest
+- Cloud based Redis (upstash)
 
 ## 🧪 Tests in Action
 

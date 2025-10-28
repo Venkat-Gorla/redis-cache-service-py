@@ -119,7 +119,42 @@ uv run pytest -k test_simple_cache_coalesces_requests -v
 
 All tests simulate **concurrent clients, lock behavior, and cache invalidation**.
 
-<img src="./public/unit-tests.PNG" alt="Unit Test Results" width="700" />
+**Test Output:**
+
+```
+C:\Users\venka\Downloads\Udemy\GitHub\redis-cache-service-py>uv run pytest -v
+========================= test session starts =========================
+platform win32 -- Python 3.13.1, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\venka\Downloads\Udemy\GitHub\redis-cache-service-py\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\venka\Downloads\Udemy\GitHub\redis-cache-service-py
+configfile: pytest.ini
+plugins: asyncio-1.2.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 18 items
+
+tests/test_cache_manager.py::test_lock_table_single_instance_per_key PASSED                                                                                          [  5%]
+tests/test_cache_manager.py::test_lock_table_different_keys_create_different_locks PASSED                                                                            [ 11%]
+tests/test_cache_manager.py::test_simple_cache_coalesces_requests PASSED                                                                                             [ 16%]
+tests/test_cache_manager.py::test_simple_cache_reuses_cached_value PASSED                                                                                            [ 22%]
+tests/test_cache_manager.py::test_concurrent_different_keys_load_independently PASSED                                                                                [ 27%]
+tests/test_cli.py::test_ping PASSED                                                                                                                                  [ 33%]
+tests/test_cli.py::test_set_key PASSED                                                                                                                               [ 38%]
+tests/test_cli.py::test_get_key_not_found PASSED                                                                                                                     [ 44%]
+tests/test_cli.py::test_stream_trimming PASSED                                                                                                                       [ 50%]
+tests/test_cli.py::test_stream_event_created PASSED                                                                                                                  [ 55%]
+tests/test_cli.py::test_consume_pending_from_last PASSED                                                                                                             [ 61%]
+tests/test_redis_utils.py::test_async_ping_redis_success PASSED                                                                                                      [ 66%]
+tests/test_redis_utils.py::test_async_set_key_success PASSED                                                                                                         [ 72%]
+tests/test_redis_utils.py::test_async_get_key_success PASSED                                                                                                         [ 77%]
+tests/test_redis_utils.py::test_async_get_key_missing PASSED                                                                                                         [ 83%]
+tests/test_redis_utils.py::test_async_ping_redis_failure PASSED                                                                                                      [ 88%]
+tests/test_redis_utils.py::test_async_set_key_failure PASSED                                                                                                         [ 94%]
+tests/test_redis_utils.py::test_async_get_key_failure PASSED                                                                                                         [100%]
+
+========================= 18 passed in 1.34s =========================
+
+C:\Users\venka\Downloads\Udemy\GitHub\redis-cache-service-py>
+```
 
 ## 🔮 Future Enhancements
 
